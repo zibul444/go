@@ -42,7 +42,7 @@ func init() {
 	//И запускаем разбор аргументов
 	flag.Parse()
 }
-ичего-ничего, я уже
+
 func main() {
 	//Открываем файл с цитатами...
 	quotes_file, err := os.OpenFile(QUOTES_FILE, os.O_APPEND|os.O_CREATE, 0666)
