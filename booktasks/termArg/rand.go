@@ -32,10 +32,4 @@ func rnd1() {
 	fmt.Println("Float32						", rand.Float32())
 
 	fmt.Println("")
-	fmt.Println("", rand.Int())
-
-}
-
-func rnd2() {
-
 }
