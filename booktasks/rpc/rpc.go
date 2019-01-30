@@ -7,7 +7,8 @@ import (
 	"net/rpc"
 )
 
-type Server struct {}
+type Server struct{}
+
 func (this *Server) Negate(i int64, reply *int64) error {
 	*reply = -i
 	log.Println("Negate")

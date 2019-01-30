@@ -13,7 +13,7 @@ func main() {
 	go client()
 	var input string
 	fmt.Scanln(input)
-	<- time.After(time.Second * time.Duration(100))
+	<-time.After(time.Second * time.Duration(100))
 }
 
 func server() {

@@ -29,7 +29,6 @@ func testF() {
 	fmt.Scanln(&input)
 }
 
-
 func pinger(c chan<- string) {
 	for i := 0; ; i++ {
 		c <- "ping"
@@ -37,7 +36,7 @@ func pinger(c chan<- string) {
 }
 func printer(c <-chan string) {
 	for {
-		msg := <- c
+		msg := <-c
 		fmt.Println(msg)
 		time.Sleep(time.Second * 1)
 	}
@@ -54,7 +53,7 @@ func testPingerPrinter() {
 }
 
 func ponger(c chan<- string) {
-	for{
+	for {
 		c <- "pong"
 	}
 }

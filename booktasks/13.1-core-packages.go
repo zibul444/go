@@ -24,6 +24,6 @@ func mu() {
 			m.Unlock()
 		}(i)
 	}
-	time.Sleep(time.Second*2)
+	time.Sleep(time.Second * 2)
 	fmt.Println("for - is end")
 }

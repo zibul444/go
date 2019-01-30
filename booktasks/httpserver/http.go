@@ -11,11 +11,11 @@ func main() {
 	http.ListenAndServe(":8800", nil)
 }
 
-func hello(res http.ResponseWriter, req *http.Request){
+func hello(res http.ResponseWriter, req *http.Request) {
 	res.Header().Set(
 		"Content-Typ",
 		"text/html",
-		)
+	)
 	fmt.Println(req.FormValue("param1"))
 	io.WriteString(
 		res,

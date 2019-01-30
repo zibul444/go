@@ -11,7 +11,7 @@ import (
 )
 
 func main() {
-	pass := "/home/e460/go/src/awesomeProject/BookTasks/13-core-packages.go"
+	pass := "/home/e460/go/src/awesomeProject/booktasks/13-core-packages.go"
 	//readeFile(pass)
 
 	//fastread(pass)
@@ -25,7 +25,6 @@ func main() {
 	//hashFun(pass)
 	hashFunsha1(pass)
 }
-
 
 func readeFile(pas string) {
 	f, err := os.Open(pas)
@@ -49,7 +48,7 @@ func readeFile(pas string) {
 	fmt.Println("bs:\n", string(bs))
 }
 
-func fastread(pas string){
+func fastread(pas string) {
 	bs, err := ioutil.ReadFile(pas)
 	if err != nil {
 		return
@@ -57,7 +56,6 @@ func fastread(pas string){
 	str := string(bs)
 	fmt.Println(str)
 }
-
 
 func readdir(pas string) {
 	dir, err := os.Open(".")
@@ -84,8 +82,8 @@ func walk(pas string) {
 		})
 }
 
-func erro(pas string) error{
-	err := errors.New("error message-1 "+ pas)
+func erro(pas string) error {
+	err := errors.New("error message-1 " + pas)
 	//panic(err)
 	return err
 }
@@ -96,7 +94,6 @@ func hashFun(s string) {
 	v := h.Sum32()
 	fmt.Println(v)
 }
-
 
 func hashFunsha1(s string) {
 	h := sha1.New()

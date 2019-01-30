@@ -30,14 +30,14 @@ func f1() {
 	go func() {
 		for {
 			select {
-				case msg1 := <- c1:
-					fmt.Println("Message 1", msg1)
-				case msg2 := <- c2:
-					fmt.Println("Message 2", msg2)
-				case <- time.After(time.Second):
-					fmt.Println("timeout")
-				default:
-					fmt.Println("nothing ready")
+			case msg1 := <-c1:
+				fmt.Println("Message 1", msg1)
+			case msg2 := <-c2:
+				fmt.Println("Message 2", msg2)
+			case <-time.After(time.Second):
+				fmt.Println("timeout")
+			default:
+				fmt.Println("nothing ready")
 			}
 			time.Sleep(time.Second * 1)
 		}
