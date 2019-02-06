@@ -308,8 +308,6 @@ func main() {
 
 	http.HandleFunc("/", lissajous)
 
-	//http.Server{}
-
 	log.Fatalln(http.ListenAndServe("localhost:8000", nil))
 }
 
@@ -323,7 +321,6 @@ func lissajous(out http.ResponseWriter, r *http.Request) {
 	liss.Delay = 8    // Delay between frames in 10ms units
 
 	//printParam(r)
-
 	valueExtract(r, &liss)
 
 	//setTransferredValues(r, &liss.Cycles, &liss.Res, &liss.Size, &liss.Nframes, &liss.Delay)
@@ -331,8 +328,6 @@ func lissajous(out http.ResponseWriter, r *http.Request) {
 	sortSlice()
 
 	blackIndex := generateIndex()
-
-	//fmt.Println("colorIndex", blackIndex, "\n______________")
 
 	freq := rand.Float64() * 3.0 // relative frequency of y oscillator
 	anim := gif.GIF{LoopCount: liss.Nframes}
@@ -408,8 +403,6 @@ func printParam(r *http.Request) {
 }
 
 func valueExtract(r *http.Request, p *Properties) {
-	fmt.Println("Start ")
-
 	//namesOfProperties := reflect.ValueOf(r.URL.Query()).MapKeys()
 
 	s := reflect.ValueOf(p).Elem()
@@ -419,40 +412,28 @@ func valueExtract(r *http.Request, p *Properties) {
 		//fmt.Printf("%d: %s %s = %v\n", i, typeOfT.Field(i).Name, f.Type(), f.Interface())
 
 		if v, ok := r.URL.Query()[typeOfT.Field(i).Name]; ok == true {
-
-			setValue(f, v)
+			setValue(f, v[0])
 		}
 		//for _, k := range namesOfProperties {
 		//	v, _ := r.URL.Query()[k.String()]
 		//	fmt.Println(k, v[0])
 		//}
-
 	}
-
-	//for _, k := range namesOfProperties {
-	//	v, _ := r.URL.Query()[k.String()]
-	//	fmt.Println(k, v[0])
-	//}
-	fmt.Println("Stop ")
 }
 
-func setValue(f reflect.Value, v []string) {
-	if f.Type().Name() == "int" {
-		fmt.Println("Type is int!")
-
-		//fmt.Println("settability of v:", f.CanSet())
-		v, err := strconv.Atoi(v[0])
+func setValue(field reflect.Value, value string) {
+	if field.Type().Name() == "int" {
+		//fmt.Println("settability of value:", field.CanSet())
+		v, err := strconv.Atoi(value)
 		if err != nil {
 			panic(err)
 		}
-		f.SetInt(int64(v))
-	} else if f.Type().Name() == "float64" {
-		fmt.Println("Type is float64!")
-
-		v, err := strconv.ParseFloat(v[0], 64)
+		field.SetInt(int64(v))
+	} else if field.Type().Name() == "float64" {
+		v, err := strconv.ParseFloat(value, 64)
 		if err != nil {
 			panic(err)
 		}
-		f.SetFloat(v)
+		field.SetFloat(v)
 	}
 }
