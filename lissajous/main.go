@@ -23,6 +23,14 @@ import (
 	"time"
 )
 
+type Properties struct {
+	Cycles  int
+	Res     float64
+	Size    int
+	Nframes int
+	Delay   int
+}
+
 var (
 	//palette = []color.Color{
 	//	color.Black, color.RGBA{0, 230, 64, 1}, color.White,	color.RGBA{207, 0, 15, 1},
@@ -287,6 +295,8 @@ var (
 		color.RGBA{0xff, 0xff, 0xff, 0xff}}
 
 	colorIndex int // next color in palette
+
+	liss Properties
 )
 
 func main() {
@@ -298,43 +308,46 @@ func main() {
 
 	http.HandleFunc("/", lissajous)
 
+	//http.Server{}
+
 	log.Fatalln(http.ListenAndServe("localhost:8000", nil))
 }
 
 func lissajous(out http.ResponseWriter, r *http.Request) {
+	fmt.Println("HandleFunc lissajous was called")
 
-	cycles := 5   // number of complete x oscillator revolutions
-	res := 0.001  // angular resolution
-	size := 400   // image canvas covers [-size..+size]
-	nframes := 64 // number of animation frames
-	delay := 8    // delay between frames in 10ms units
+	liss.Cycles = 5   // number of complete x oscillator revolutions
+	liss.Res = 0.001  // angular resolution
+	liss.Size = 400   // image canvas covers [-Size..+Size]
+	liss.Nframes = 64 // number of animation frames
+	liss.Delay = 8    // Delay between frames in 10ms units
 
-	printParam(r)
+	//printParam(r)
 
-	valueExtract(r)
+	valueExtract(r, &liss)
 
-	setTransferredValues(r, &cycles, &res, &size, &nframes, &delay)
+	//setTransferredValues(r, &liss.Cycles, &liss.Res, &liss.Size, &liss.Nframes, &liss.Delay)
 
 	sortSlice()
 
 	blackIndex := generateIndex()
 
-	fmt.Println("colorIndex", blackIndex, "\n______________")
+	//fmt.Println("colorIndex", blackIndex, "\n______________")
 
 	freq := rand.Float64() * 3.0 // relative frequency of y oscillator
-	anim := gif.GIF{LoopCount: nframes}
+	anim := gif.GIF{LoopCount: liss.Nframes}
 	phase := 0.0 // phase difference
-	for i := 0; i < nframes; i++ {
-		rect := image.Rect(0, 0, 2*size+1, 2*size+1)
+	for i := 0; i < liss.Nframes; i++ {
+		rect := image.Rect(0, 0, 2*liss.Size+1, 2*liss.Size+1)
 		img := image.NewPaletted(rect, palette)
-		for t := 0.0; t < float64(cycles)*2*math.Pi; t += res {
+		for t := 0.0; t < float64(liss.Cycles)*2*math.Pi; t += liss.Res {
 			x := math.Sin(t)
 			y := math.Sin(t*freq + phase)
-			img.SetColorIndex(size+int(x*float64(size)+0.5), size+int(y*float64(size)+0.5),
+			img.SetColorIndex(liss.Size+int(x*float64(liss.Size)+0.5), liss.Size+int(y*float64(liss.Size)+0.5),
 				uint8(blackIndex))
 		}
 		phase += 0.1
-		anim.Delay = append(anim.Delay, delay)
+		anim.Delay = append(anim.Delay, liss.Delay)
 		anim.Image = append(anim.Image, img)
 	}
 	gif.EncodeAll(out, &anim) // NOTE: ignoring encoding errors
@@ -355,25 +368,25 @@ func sortSlice() {
 }
 
 func setTransferredValues(r *http.Request, cycles *int, res *float64, size *int, nframes *int, delay *int) {
-	if keys, ok := r.URL.Query()["cycles"]; ok {
-		fmt.Println("cycles", keys[0])
+	if keys, ok := r.URL.Query()["Cycles"]; ok {
+		fmt.Println("Cycles", keys[0])
 		*cycles, _ = strconv.Atoi(keys[0])
 	}
-	if keys, ok := r.URL.Query()["res"]; ok {
-		fmt.Println("res", keys)
+	if keys, ok := r.URL.Query()["Res"]; ok {
+		fmt.Println("Res", keys)
 		qwe, _ := strconv.Atoi(keys[0])
 		*res = float64(qwe)
 	}
-	if keys, ok := r.URL.Query()["size"]; ok {
-		fmt.Println("size", keys)
+	if keys, ok := r.URL.Query()["Size"]; ok {
+		fmt.Println("Size", keys)
 		*size, _ = strconv.Atoi(keys[0])
 	}
-	if keys, ok := r.URL.Query()["nframes"]; ok {
-		fmt.Println("nframes", keys)
+	if keys, ok := r.URL.Query()["Nframes"]; ok {
+		fmt.Println("Nframes", keys)
 		*nframes, _ = strconv.Atoi(keys[0])
 	}
-	if keys, ok := r.URL.Query()["delay"]; ok {
-		fmt.Println("delay", keys)
+	if keys, ok := r.URL.Query()["Delay"]; ok {
+		fmt.Println("Delay", keys)
 		*delay, _ = strconv.Atoi(keys[0])
 	}
 }
@@ -390,12 +403,56 @@ func printParam(r *http.Request) {
 	fmt.Println("Opaque", r.URL.Opaque)
 	fmt.Println("Query", r.URL.Query())
 	fmt.Println("MapKeys Query", reflect.ValueOf(r.URL.Query()).MapKeys())
+
+	fmt.Println("End print param______")
 }
 
-// TODO Метод должен будет устанавливать переданые параметры в соответствующие переменные
-func valueExtract(r *http.Request) {
-	for _, k := range reflect.ValueOf(r.URL.Query()).MapKeys() {
-		v, _ := r.URL.Query()[k.String()]
-		fmt.Println(k, v[0])
+func valueExtract(r *http.Request, p *Properties) {
+	fmt.Println("Start ")
+
+	//namesOfProperties := reflect.ValueOf(r.URL.Query()).MapKeys()
+
+	s := reflect.ValueOf(p).Elem()
+	typeOfT := s.Type()
+	for i := 0; i < s.NumField(); i++ {
+		f := s.Field(i)
+		//fmt.Printf("%d: %s %s = %v\n", i, typeOfT.Field(i).Name, f.Type(), f.Interface())
+
+		if v, ok := r.URL.Query()[typeOfT.Field(i).Name]; ok == true {
+
+			setValue(f, v)
+		}
+		//for _, k := range namesOfProperties {
+		//	v, _ := r.URL.Query()[k.String()]
+		//	fmt.Println(k, v[0])
+		//}
+
+	}
+
+	//for _, k := range namesOfProperties {
+	//	v, _ := r.URL.Query()[k.String()]
+	//	fmt.Println(k, v[0])
+	//}
+	fmt.Println("Stop ")
+}
+
+func setValue(f reflect.Value, v []string) {
+	if f.Type().Name() == "int" {
+		fmt.Println("Type is int!")
+
+		//fmt.Println("settability of v:", f.CanSet())
+		v, err := strconv.Atoi(v[0])
+		if err != nil {
+			panic(err)
+		}
+		f.SetInt(int64(v))
+	} else if f.Type().Name() == "float64" {
+		fmt.Println("Type is float64!")
+
+		v, err := strconv.ParseFloat(v[0], 64)
+		if err != nil {
+			panic(err)
+		}
+		f.SetFloat(v)
 	}
 }
