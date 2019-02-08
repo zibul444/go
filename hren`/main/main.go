@@ -1,8 +1,8 @@
 package main
 
 import (
-	//"go/myFerstProject/client"
-	//"go/myFerstProject/server"
+	//"go/hren`/client"
+	//"go/hren`/server"
 	"time"
 )
 

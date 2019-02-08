@@ -1,5 +1,3 @@
-// Copyright © 2016 Alan A. A. Donovan & Brian W. Kernighan.
-// License: https://creativecommons.org/licenses/by-nc-sa/4.0/
 package main
 
 import (
@@ -9,14 +7,13 @@ import (
 	"image/gif"
 	"math"
 	"math/rand"
+	"net/url"
 	"reflect"
 	"sort"
 	"strconv"
 	"strings"
 )
 
-//!-main
-// Packages not needed by version in book.
 import (
 	"log"
 	"net/http"
@@ -301,12 +298,9 @@ var (
 
 func main() {
 
-	// The sequence of images is deterministic unless we seed
-	// the pseudo-random number generator using the current time.
-	// Thanks to Randall McPherson for pointing out the omission.
 	rand.Seed(time.Now().UTC().UnixNano())
 
-	http.HandleFunc("/", lissajous)
+	http.HandleFunc("/l", lissajous)
 
 	log.Fatalln(http.ListenAndServe("localhost:8000", nil))
 }
@@ -362,6 +356,7 @@ func sortSlice() {
 	})
 }
 
+// deprecate
 func setTransferredValues(r *http.Request, cycles *int, res *float64, size *int, nframes *int, delay *int) {
 	if keys, ok := r.URL.Query()["Cycles"]; ok {
 		fmt.Println("Cycles", keys[0])
@@ -386,6 +381,7 @@ func setTransferredValues(r *http.Request, cycles *int, res *float64, size *int,
 	}
 }
 
+// deprecate
 func printParam(r *http.Request) {
 	//r.ParseForm()
 	fmt.Println("Host", r.URL.Host)
@@ -403,22 +399,37 @@ func printParam(r *http.Request) {
 }
 
 func valueExtract(r *http.Request, p *Properties) {
+	queryMap := formatQuery(r.URL.Query())
+	//queryMap :=
 	//namesOfProperties := reflect.ValueOf(r.URL.Query()).MapKeys()
 
 	s := reflect.ValueOf(p).Elem()
 	typeOfT := s.Type()
 	for i := 0; i < s.NumField(); i++ {
 		f := s.Field(i)
-		//fmt.Printf("%d: %s %s = %v\n", i, typeOfT.Field(i).Name, f.Type(), f.Interface())
+		fmt.Printf("%d: %s %s = %v\n", i, typeOfT.Field(i).Name, f.Type(), f.Interface())
 
-		if v, ok := r.URL.Query()[typeOfT.Field(i).Name]; ok == true {
-			setValue(f, v[0])
+		if v, ok := queryMap[typeOfT.Field(i).Name]; ok == true { //todo отформатировать
+			fmt.Println("qwe", v)
+			setValue(f, v)
 		}
-		//for _, k := range namesOfProperties {
-		//	v, _ := r.URL.Query()[k.String()]
-		//	fmt.Println(k, v[0])
-		//}
 	}
+
+	//for _, k := range namesOfProperties {
+	//	v, ok := r.URL.Query()[k.String()]
+	//	if ok == true {
+	//		fmt.Println(k, v[0])
+	//	}
+	//}
+}
+
+func formatQuery(queryMap url.Values) (m map[string]string) {
+	m = make(map[string]string)
+	for k, v := range queryMap {
+		fmt.Println(strings.Title(strings.ToLower(k)), v[0])
+		m[strings.Title(strings.ToLower(k))] = v[0]
+	}
+	return
 }
 
 func setValue(field reflect.Value, value string) {
