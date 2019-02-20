@@ -6,24 +6,45 @@ import (
 	"time"
 )
 
-func main() {
-	mu()
+var ch = make(chan string)
+var cancel = make(chan string)
+var m = new(sync.Mutex)
+var C = 5
+var wg sync.WaitGroup
 
-	var input string
-	fmt.Scanln(&input)
+const Q = 5
+
+func main() {
+
+	go mu()
+	go print()
+
+	fmt.Println(<-cancel)
+
+	//var input string
+	//fmt.Scanln(&input)
 }
 
 func mu() {
-	m := new(sync.Mutex)
-	for i := 0; i < 10; i++ {
+	for i := 0; i < Q; i++ {
+		wg.Add(1)
 		go func(i int) {
 			m.Lock()
-			fmt.Println(i, "Start")
-			time.Sleep(time.Second)
-			fmt.Println(i, "emd")
-			m.Unlock()
+			defer m.Unlock()
+			ch <- fmt.Sprint(i, " Start")
+			ch <- fmt.Sprint(i, " end")
+			time.Sleep(time.Millisecond * 50)
+			wg.Done()
 		}(i)
 	}
-	time.Sleep(time.Second * 2)
-	fmt.Println("for - is end")
+
+	//time.Sleep(time.Second * 2)
+	wg.Wait()
+	cancel <- "for - is ended"
+}
+
+func print() {
+	for {
+		fmt.Println(<-ch)
+	}
 }

@@ -12,9 +12,7 @@ import (
 	"sort"
 	"strconv"
 	"strings"
-)
 
-import (
 	"log"
 	"net/http"
 	"time"
@@ -308,16 +306,16 @@ func main() {
 func lissajous(out http.ResponseWriter, r *http.Request) {
 	fmt.Println("HandleFunc lissajous was called")
 
-	liss.Cycles = 5   // number of complete x oscillator revolutions
+	liss.Cycles = 2   // number of complete x oscillator revolutions
 	liss.Res = 0.001  // angular resolution
 	liss.Size = 400   // image canvas covers [-Size..+Size]
-	liss.Nframes = 64 // number of animation frames
+	liss.Nframes = 32 // number of animation frames
 	liss.Delay = 8    // Delay between frames in 10ms units
 
 	//printParam(r)
 	valueExtract(r, &liss)
 
-	//setTransferredValues(r, &liss.Cycles, &liss.Res, &liss.Size, &liss.Nframes, &liss.Delay)
+	setTransferredValues(r, &liss.Cycles, &liss.Res, &liss.Size, &liss.Nframes, &liss.Delay)
 
 	sortSlice()
 
