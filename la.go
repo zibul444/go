@@ -1,10 +1,70 @@
 package main
 
 import (
-	"fmt"
-	"strconv"
+	"github.com/op/go-logging"
+	"go/logger"
+	_ "go/logger"
+	"math"
 )
 
+func main() {
+	log := logger.MyLogger
+
+	//log.Debugf("debug %s  ______________________________________________________", logger.Password("secret") )
+	//log.Info("info _______________________________________________________________")
+	//log.Notice("notice _____________________________________________________________")
+	//log.Warning("warning ____________________________________________________________")
+	//log.Error("err ________________________________________________________________")
+	//log.Critical("crit _______________________________________________________________")
+
+	var u uint8 = 255
+	log.Debug(u, u+1, u, u*u)
+	var i int8 = 127
+	log.Debug(i, i+1, i, i*i)
+
+	var x, y = 2, 2
+	log.Debug(x < y)
+
+	log.Debug(false != true)
+
+	var q, w, e, r = false, false, true, true
+	log.Debug(q, w, e, r)
+
+	//bitwiseOperation(log)
+
+	log.Debug(math.MaxInt8)
+
+}
+
+func bitwiseOperation(log *logging.Logger) {
+	log.Debug(2 * 2)
+	log.Debug("__&_")
+	log.Debug(2 & 10)
+	log.Debug(4 & 2)
+	log.Debug(2 & 4)
+	log.Debug("__|_")
+	log.Debug(2 | 2)
+	log.Debug(4 | 2)
+	log.Debug(2 | 4)
+	log.Debug("__^_")
+	log.Debug(2 ^ 2)
+	log.Debug(4 ^ 2)
+	log.Debug(2 ^ 4)
+	log.Debug("__&^_")
+	log.Debug(2 &^ 2)
+	log.Debug(4 &^ 2)
+	log.Debug(2 &^ 4)
+	log.Debug("__<<_")
+	log.Debug(2 << 2)
+	log.Debug(4 << 2)
+	log.Debug(2 << 4)
+	log.Debug("__>>_")
+	log.Debug(2 >> 2)
+	log.Debug(4 >> 2)
+	log.Debug(2 >> 4)
+}
+
+/*
 func main() {
 	//fmt.Println(rand.NewSource(time.Now().UnixNano()))
 	//a,s := 1, 2
@@ -54,4 +114,4 @@ type Properties struct {
 	Size    int
 	Nframes int
 	Delay   int
-}
+}*/

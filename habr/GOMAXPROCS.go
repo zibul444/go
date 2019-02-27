@@ -8,7 +8,7 @@ import (
 
 func main() {
 	log.Println(runtime.GOMAXPROCS(4))
-
+	compact()
 	log.Println(runtime.GOMAXPROCS(0))
 
 }

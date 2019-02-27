@@ -312,7 +312,7 @@ func lissajous(out http.ResponseWriter, r *http.Request) {
 	liss.Nframes = 32 // number of animation frames
 	liss.Delay = 8    // Delay between frames in 10ms units
 
-	//printParam(r)
+	printParam(r)
 	valueExtract(r, &liss)
 
 	setTransferredValues(r, &liss.Cycles, &liss.Res, &liss.Size, &liss.Nframes, &liss.Delay)
@@ -354,7 +354,7 @@ func sortSlice() {
 	})
 }
 
-// deprecate
+// Deprecate:
 func setTransferredValues(r *http.Request, cycles *int, res *float64, size *int, nframes *int, delay *int) {
 	if keys, ok := r.URL.Query()["Cycles"]; ok {
 		fmt.Println("Cycles", keys[0])
@@ -379,7 +379,7 @@ func setTransferredValues(r *http.Request, cycles *int, res *float64, size *int,
 	}
 }
 
-// deprecate
+// Deprecate
 func printParam(r *http.Request) {
 	//r.ParseForm()
 	fmt.Println("Host", r.URL.Host)
@@ -405,9 +405,9 @@ func valueExtract(r *http.Request, p *Properties) {
 	typeOfT := s.Type()
 	for i := 0; i < s.NumField(); i++ {
 		f := s.Field(i)
-		fmt.Printf("%d: %s %s = %v\n", i, typeOfT.Field(i).Name, f.Type(), f.Interface())
+		fmt.Printf("%d: %10s %10s = %v\n", i, typeOfT.Field(i).Name, f.Type(), f.Interface())
 
-		if v, ok := queryMap[typeOfT.Field(i).Name]; ok == true { //todo отформатировать
+		if v, ok := queryMap[typeOfT.Field(i).Name]; ok { //todo отформатировать
 			fmt.Println("qwe", v)
 			setValue(f, v)
 		}
@@ -431,8 +431,10 @@ func formatQuery(queryMap url.Values) (m map[string]string) {
 }
 
 func setValue(field reflect.Value, value string) {
+
 	if field.Type().Name() == "int" {
 		//fmt.Println("settability of value:", field.CanSet())
+		//math.IsNaN()
 		v, err := strconv.Atoi(value)
 		if err != nil {
 			panic(err)

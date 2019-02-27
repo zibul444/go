@@ -2,10 +2,8 @@ package main
 
 import (
 	"flag"
-	"fmt"
+	"go/logger"
 	"math/rand"
-	"os"
-	"text/tabwriter"
 	"time"
 )
 
@@ -21,29 +19,32 @@ func rnd1() {
 	// очень важная деталь! Seed - принимает число
 	rand.Seed(time.Now().UnixNano())
 
-	w := tabwriter.NewWriter(os.Stdout, 1, 1, 1, ' ', 8)
-	defer w.Flush()
-	show := func(name string, v ...interface{}) {
+	//w := tabwriter.NewWriter(os.Stdout, 1, 1, 1, ' ', 8)
+	//defer w.Flush()
+	//show := func(name string, v ...interface{}) {
+	//
+	//	fmt.Fprintf(w, "%s\t%d\t", name, v)
+	//	for n := range v{
+	//		fmt.Fprintf(w, "%19d\t", n)
+	//		fmt.Fprint(w,  n)
+	//	}
+	//	fmt.Fprintln(w)
+	//
+	//	//fmt.Fprintf(w, "%s\t%v\t\n", name, v)
+	//}
 
-		//fmt.Fprintf(w, "%s\t", name)
-		//for n := range v{
-		//	fmt.Fprintf(w, "%v\t", n)
-		//}
-		//fmt.Fprintln(w)
+	log := logger.MyLogger
 
-		fmt.Fprintf(w, "%s\t%v\t\n", name, v)
-	}
+	log.Debugf("%10s %22v", "Int63 ", rand.Int63())
+	log.Debugf("%10s %22v", "Uint32 ", rand.Uint32())
+	log.Debugf("%10s %22v", "Uint64 ", rand.Uint64())
+	log.Debugf("%10s %22v", "Int31 ", rand.Int31())
+	log.Debugf("%10s %22v", "Int ", rand.Int())
+	log.Debugf("%10s %2d %19d", "Int63n до ", *maxp, rand.Int63n(int64(*maxp)))
+	log.Debugf("%10s %2d %19d", "Int31n до ", *maxp, rand.Int31n(int32(*maxp)))
+	log.Debugf("%10s %2d %19d", "Intn до ", *maxp, rand.Intn(*maxp))
+	log.Debugf("%10s %22v", "Float64 ", rand.Float64())
+	log.Debugf("%10s %22v", "Float32 ", rand.Float32())
 
-	show("Int63 ", rand.Int63())
-	show("Uint32 ", rand.Uint32())
-	show("Uint64 ", rand.Uint64())
-	show("Int31 ", rand.Int31())
-	show("Int ", rand.Int())
-	show("Int63n до ", *maxp, rand.Int63n(int64(*maxp)))
-	show("Int31n до ", *maxp, rand.Int31n(int32(*maxp)))
-	show("Intn до ", *maxp, rand.Intn(*maxp))
-	show("Float64 ", rand.Float64())
-	show("Float32 ", rand.Float32())
-
-	show("__________________")
+	//show("__________________")
 }
